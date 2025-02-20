@@ -1,197 +1,383 @@
 <!DOCTYPE html>
 <html lang="ja">
-  <!-- -------------------------------------------- -->
-  <link rel="icon" type="image/png" href="">
-
   <head prefix="og: https://ogp.me/ns#">
-    <meta property="og:url" content="" />
+    <meta property="og:url" content="https://freeze-axis.github.io/Freeze_Tool/" />
     <meta property="og:type" content="website" />
-    <meta property="og:title" content="Discordツール" />
-    <meta property="og:description" content="改良版" />
-    <meta property="og:site_name" content="多機能メッセージ送信" />
-    <meta property="og:image" content="" />
+    <meta property="og:title" content="Freeze-Axisツール" />
+    <meta property="og:description" content="メッセージ送信する為のツールです" />
+    <meta property="og:site_name" content="Freeze-Axis" />
+    <meta property="og:image" content="https://pbs.twimg.com/media/GeSdihtacAAl-zk?format=jpg" />
     <meta name="twitter:card" content="summary_large_image" />
-    <!-- -------------------------------------------- -->
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Discord Raider</title>
-  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
-  <style>
-    /* 全体設定 */
-    body {
-      font-family: 'Roboto Mono', monospace;
-      background: #121212;
-      color: #e0e0e0;
-      margin: 0;
-      padding: 20px;
-      text-align: left;
-    }
-    /* コンテナ（左寄せ） */
-    .container {
-      width: 90%;
-      max-width: 800px;
-      margin: 0; /* 左寄せ */
-      padding: 20px;
-      background: #1e1e1e;
-      border-radius: 8px;
-      box-shadow: 2px 2px 10px rgba(0,0,0,0.5);
-    }
-    h1 {
-      color: #00c6ff;
-      margin-bottom: 20px;
-    }
-    /* セクション */
-    .section {
-      margin-bottom: 20px;
-      padding: 15px;
-      border: 1px solid #00c6ff;
-      border-radius: 4px;
-      background: #2a2a2a;
-    }
-    .section h2 {
-      margin-top: 0;
-      color: #00c6ff;
-      font-size: 1.2rem;
-      border-bottom: 1px solid #00c6ff;
-      padding-bottom: 5px;
-    }
-    label {
-      display: block;
-      margin-bottom: 5px;
-      color: #00c6ff;
-      font-weight: bold;
-    }
-    input[type="text"],
-    input[type="number"],
-    textarea,
-    select {
-      width: 100%;
-      padding: 8px;
-      margin-bottom: 10px;
-      border: 1px solid #00c6ff;
-      border-radius: 4px;
-      background: #121212;
-      color: #e0e0e0;
-    }
-    .checkbox-group {
-      display: flex;
-      align-items: center;
-      margin-bottom: 10px;
-    }
-    .checkbox-group input[type="checkbox"] {
-      margin-right: 8px;
-      width: 16px;
-      height: 16px;
-      accent-color: #00c6ff;
-    }
-    .btn {
-      padding: 10px 20px;
-      font-size: 1rem;
-      font-weight: bold;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-      background: linear-gradient(90deg, #00c6ff, #0072ff);
-      color: #121212;
-      margin-right: 10px;
-    }
-    .btn:hover {
-      background: linear-gradient(90deg, #00a3d9, #005bb5);
-    }
-    .status-box {
-      background: #1e1e1e;
-      border: 1px solid #00c6ff;
-      border-radius: 4px;
-      padding: 10px;
-      max-height: 200px;
-      overflow-y: auto;
-      font-size: 0.9rem;
-    }
-  </style>
-</head>
-<body>
-  <div class="container">
-    <h1>夕立改二 -作成（改良版）</h1>
-    <form id="botForm">
-      <!-- TOKEN設定（マスク機能なし） -->
-      <div class="section" id="tokenSection">
-        <h2>TOKEN設定</h2>
-        <label for="tokenInput">TOKEN（改行で複数可能）</label>
-        <textarea id="tokenInput" name="token" rows="3" placeholder="TOKEN1&#10;TOKEN2"></textarea>
-      </div>
-      
-      <!-- ID設定 -->
-      <div class="section" id="idSection">
-        <h2>ID設定</h2>
-        <label for="serverId">サーバーID</label>
-        <input type="text" id="serverId" name="serverId" placeholder="サーバーIDを入力">
-        <label for="channelIds">チャンネルID (改行区切り)</label>
-        <textarea id="channelIds" name="channelIds" rows="2" placeholder="例：123456789012345678&#10;234567890123456789"></textarea>
-        <fieldset style="border: 1px solid #00c6ff; padding: 10px; border-radius: 4px;">
-          <legend style="color: #00c6ff;">ユーザーID取得</legend>
-          <label for="userIds">取得済みユーザーID</label>
-          <textarea id="userIds" name="userIds" rows="2" placeholder="ここに取得したユーザーIDが表示されます"></textarea>
-          <button type="button" class="btn" id="fetchUserIdsButton">ユーザーID取得</button>
-        </fieldset>
-      </div>
-      
-      <!-- メッセージ設定 -->
-      <div class="section" id="messageSection">
-        <h2>メッセージ設定</h2>
-        <label for="messageContent">メッセージ内容</label>
-        <textarea id="messageContent" name="messageContent" rows="2" placeholder="送信するメッセージ"></textarea>
-        <div class="checkbox-group">
-          <input type="checkbox" id="appendRandomString" name="appendRandomString">
-          <label for="appendRandomString">末尾にランダム文字追加</label>
-        </div>
-        <div class="checkbox-group">
-          <input type="checkbox" id="mentionRandomUsers" name="mentionRandomUsers">
-          <label for="mentionRandomUsers">ランダムにメンション</label>
-        </div>
-        <label for="mentionCount">メンション数 (1～50)</label>
-        <input type="number" id="mentionCount" name="mentionCount" min="1" max="50" value="1">
-        <fieldset style="border: 1px solid #00c6ff; padding: 10px; border-radius: 4px;">
-          <legend style="color: #00c6ff;">【メッセージ送信：投票設定】</legend>
-          <div class="checkbox-group">
-            <input type="checkbox" id="includePoll" name="includePoll">
-            <label for="includePoll">投票を含む</label>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Discord Bot Controller - Compact Dark UI (左寄せ・展開状態保存)</title>
+    <!-- Google Fonts: Roboto Mono -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+      /* 基本リセット */
+      * { box-sizing: border-box; margin: 0; padding: 0; }
+      body {
+        font-family: 'Roboto Mono', monospace;
+        background: #121212;
+        color: #e0e0e0;
+        line-height: 1.4;
+        padding: 5px;
+        font-size: 0.9rem;
+        text-align: left;
+      }
+      /* コンテナ（左寄せ・コンパクト） */
+      .container {
+        max-width: 600px;
+        margin: 5px 0;
+        padding: 5px;
+      }
+      /* アコーディオンカード */
+      .accordion {
+        background: #1f1f1f;
+        border: 1px solid #333;
+        border-radius: 4px;
+        margin-bottom: 8px;
+        overflow: hidden;
+        transition: transform 0.2s;
+      }
+      .accordion-header {
+        padding: 8px 12px;
+        background: linear-gradient(90deg, #00c6ff, #0072ff);
+        cursor: pointer;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        user-select: none;
+      }
+      .accordion-header h2 {
+        font-size: 0.9rem;
+        margin: 0;
+        color: #121212;
+      }
+      .accordion-header .toggle-icon {
+        font-size: 1rem;
+        transition: transform 0.3s;
+        color: #121212;
+      }
+      .accordion-content {
+        padding: 8px 12px;
+        display: none;
+        background: #1f1f1f;
+      }
+      .accordion-content.active { display: block; }
+      /* フォーム要素 */
+      label {
+        display: block;
+        margin-bottom: 2px;
+        font-weight: 700;
+        font-size: 0.8rem;
+        color: #00c6ff;
+        cursor: help;
+      }
+      input[type="text"],
+      input[type="number"],
+      textarea,
+      select {
+        width: 100%;
+        padding: 6px;
+        margin-bottom: 6px;
+        border: 1px solid #00c6ff;
+        border-radius: 2px;
+        background: #2a2a2a;
+        color: #e0e0e0;
+        font-size: 0.8rem;
+        transition: border-color 0.2s;
+      }
+      input[type="text"]:focus,
+      input[type="number"]:focus,
+      textarea:focus,
+      select:focus {
+        border-color: #00a3d9;
+        outline: none;
+      }
+      textarea { resize: vertical; }
+      .checkbox-group {
+        display: flex;
+        align-items: center;
+        margin-bottom: 6px;
+      }
+      .checkbox-group input[type="checkbox"] {
+        margin-right: 4px;
+        width: 14px;
+        height: 14px;
+        accent-color: #00c6ff;
+      }
+      /* ボタン */
+      .btn {
+        display: inline-block;
+        padding: 6px 12px;
+        font-size: 0.8rem;
+        font-weight: bold;
+        border: none;
+        border-radius: 2px;
+        cursor: pointer;
+        transition: background 0.2s, box-shadow 0.2s;
+        margin-top: 2px;
+        background: linear-gradient(90deg, #00c6ff, #0072ff);
+        color: #121212;
+        box-shadow: 0 1px 2px rgba(0,0,0,0.5);
+      }
+      .btn:hover { 
+        background: linear-gradient(90deg, #00a3d9, #005bb5);
+        box-shadow: 0 2px 4px rgba(0,0,0,0.7);
+      }
+      .btn:disabled { background: #555; cursor: not-allowed; }
+      /* ステータス表示エリア */
+      .status-box {
+        background: #1f1f1f;
+        border: 1px solid #00c6ff;
+        border-radius: 2px;
+        padding: 8px;
+        margin-top: 8px;
+        min-height: 100px;
+        max-height: 300px;
+        overflow-y: auto;
+        white-space: pre-wrap;
+        font-size: 0.75rem;
+      }
+      /* ツールチップ */
+      label.tooltip:hover::after {
+        content: attr(data-tip);
+        position: absolute;
+        background: #333;
+        color: #fff;
+        padding: 4px 6px;
+        border-radius: 2px;
+        top: -28px;
+        font-size: 0.7rem;
+        white-space: nowrap;
+        opacity: 0.9;
+      }
+      /* ▼ カスタム：トークン入力欄用 ▼ */
+      .token-wrapper {
+        position: relative;
+        margin-bottom: 6px;
+      }
+      #tokenInput {
+        width: 100%;
+        padding: 6px;
+        border: 1px solid #00c6ff;
+        border-radius: 2px;
+        background: #2a2a2a;
+        color: transparent;
+        caret-color: #e0e0e0;
+        resize: vertical;
+        font-family: inherit;
+        font-size: inherit;
+        line-height: inherit;
+        position: relative;
+        z-index: 2;
+      }
+      #tokenOverlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        padding: 6px;
+        pointer-events: none;
+        white-space: pre-wrap;
+        color: #e0e0e0;
+        font-family: inherit;
+        font-size: inherit;
+        line-height: inherit;
+        z-index: 3;
+        overflow: hidden;
+      }
+      .unmasked #tokenInput {
+        color: #e0e0e0;
+      }
+      .unmasked #tokenOverlay {
+        display: none;
+      }
+      /* ▼ メッセージ設定用スタイル ▼ */
+      .message-settings-container {
+        padding: 10px;
+        border: 1px solid #00c6ff;
+        border-radius: 4px;
+        background-color: #181818;
+        margin-top: 8px;
+      }
+      .message-settings-container h3 {
+        margin-bottom: 8px;
+        color: #00c6ff;
+      }
+      .delay-settings {
+        border: 1px solid #00c6ff;
+        padding: 8px;
+        margin-top: 8px;
+        border-radius: 4px;
+        background-color: #1a1a1a;
+      }
+      /* ▼ カスタム：トークン入力欄用 ▲ */
+      .execution-buttons {
+        margin-top: 10px;
+        text-align: center;
+      }
+      .thread-execution-buttons {
+        margin-top: 10px;
+        text-align: center;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <form id="botForm">
+        <!-- TOKEN設定 -->
+        <div class="accordion" id="botServer">
+          <div class="accordion-header">
+            <h2>TOKEN設定</h2>
+            <span class="toggle-icon">＋</span>
           </div>
-          <label for="pollQuestion">投票タイトル</label>
-          <input type="text" id="pollQuestion" name="pollQuestion" placeholder="投票のタイトル">
-          <label for="pollAnswers">投票の回答 (カンマ区切り)</label>
-          <input type="text" id="pollAnswers" name="pollAnswers" placeholder="例：回答1,回答2,回答3">
-          <label for="pollDuration">開催期間</label>
-          <select id="pollDuration" name="pollDuration">
-            <option value="1">1時間</option>
-            <option value="4">4時間</option>
-            <option value="8">8時間</option>
-            <option value="24">24時間</option>
-            <option value="72">3日間</option>
-            <option value="168">1週間</option>
-            <option value="336">2週間</option>
-          </select>
-          <div class="checkbox-group">
-            <input type="checkbox" id="expirePoll" name="expirePoll">
-            <label for="expirePoll">投票を即時終了</label>
+          <div class="accordion-content">
+            <label for="tokenInput" class="tooltip" data-tip="各行に1トークン。セキュリティのため初期は●で隠されています。">Botトークン</label>
+            <div class="token-wrapper" id="tokenWrapper">
+              <textarea id="tokenInput" name="token" rows="3" placeholder="TOKEN1&#10;TOKEN2"></textarea>
+              <div id="tokenOverlay"></div>
+            </div>
+            <button type="button" class="btn" id="toggleTokenBtn">トークンを表示</button>
           </div>
-        </fieldset>
-        <div class="checkbox-group">
-          <input type="checkbox" id="enableDelay" name="enableDelay">
-          <label for="enableDelay">送信遅延を有効にする</label>
         </div>
-        <label for="delay">送信遅延（ミリ秒）</label>
-        <input type="number" id="delay" name="delay" step="1" value="0" placeholder="例：1000">
-      </div>
+        
+        <!-- ID設定（サーバーID含む） -->
+        <div class="accordion" id="channel">
+          <div class="accordion-header">
+            <h2>ID設定</h2>
+            <span class="toggle-icon">＋</span>
+          </div>
+          <div class="accordion-content">
+            <label for="serverId" class="tooltip" data-tip="例：123456789012345678">サーバーID</label>
+            <input type="text" id="serverId" name="serverId" placeholder="サーバーIDを入力">
+            <div class="checkbox-group">
+              <input type="checkbox" id="sendToAllChannels" name="sendToAllChannels">
+              <label for="sendToAllChannels">全チャンネルにランダム送信（自動取得）</label>
+            </div>
+            <div id="manualChannelDiv">
+              <label for="channelIds" class="tooltip" data-tip="各行に1つのチャンネルIDを入力">チャンネルID（改行区切り）</label>
+              <textarea id="channelIds" name="channelIds" rows="2" placeholder="例：123456789012345678&#10;234567890123456789"></textarea>
+            </div>
+            <fieldset style="border:1px solid #00c6ff; padding: 8px; margin-top: 8px;">
+              <legend style="padding: 0 4px; color: #00c6ff; font-size: 0.8rem;">ユーザーID取得</legend>
+              <label for="userIds" class="tooltip" data-tip="取得したユーザーIDは各行に表示されます">取得済みユーザーID</label>
+              <textarea id="userIds" name="userIds" rows="2" placeholder="ここに取得したユーザーIDが表示されます"></textarea>
+              <button type="button" class="btn" id="fetchUserIdsButton">ユーザーID取得</button>
+            </fieldset>
+          </div>
+        </div>
+        
+        <!-- メッセージ設定 -->
+        <div class="accordion" id="message">
+          <div class="accordion-header">
+            <h2>メッセージ設定</h2>
+            <span class="toggle-icon">＋</span>
+          </div>
+          <div class="accordion-content">
+            <div class="message-settings-container">
+              <h3>メッセージ設定</h3>
+              <label for="messageContent" class="tooltip" data-tip="送信するメッセージ本文">メッセージ内容</label>
+              <textarea id="messageContent" name="messageContent" rows="2" placeholder="送信するメッセージ"></textarea>
+              <div class="checkbox-group">
+                <input type="checkbox" id="appendRandomString" name="appendRandomString">
+                <label for="appendRandomString">末尾にランダム文字追加</label>
+              </div>
+              <div class="checkbox-group">
+                <input type="checkbox" id="mentionRandomUsers" name="mentionRandomUsers">
+                <label for="mentionRandomUsers">ランダムにメンション</label>
+              </div>
+              <label for="mentionCount" class="tooltip" data-tip="1～50の範囲で設定">メンション数</label>
+              <input type="number" id="mentionCount" name="mentionCount" min="1" max="50" value="1">
+              <fieldset style="border:1px solid #00c6ff; padding: 8px; margin-top: 8px; border-radius:4px;">
+                <legend style="padding: 0 4px; color: #00c6ff; font-size: 0.8rem;">【メッセージ送信：投票設定】</legend>
+                <div class="checkbox-group">
+                  <input type="checkbox" id="includePoll" name="includePoll">
+                  <label for="includePoll">投票を含む</label>
+                </div>
+                <div id="pollFields" style="display: none;">
+                  <label for="pollQuestion" class="tooltip" data-tip="投票のタイトルを入力">投票タイトル</label>
+                  <input type="text" id="pollQuestion" name="pollQuestion" placeholder="投票のタイトル">
+                  <label for="pollAnswers" class="tooltip" data-tip="カンマ区切りで複数回答を入力">投票の回答</label>
+                  <input type="text" id="pollAnswers" name="pollAnswers" placeholder="例：回答1,回答2,回答3">
+                  <label for="pollDuration" class="tooltip" data-tip="投票の開催期間（単位：時間）">開催期間</label>
+                  <select id="pollDuration" name="pollDuration">
+                    <option value="1">1時間</option>
+                    <option value="4">4時間</option>
+                    <option value="8">8時間</option>
+                    <option value="24">24時間</option>
+                    <option value="72">3日間</option>
+                    <option value="168">1週間</option>
+                    <option value="336">2週間</option>
+                  </select>
+                  <div class="checkbox-group">
+                    <input type="checkbox" id="expirePoll" name="expirePoll">
+                    <label for="expirePoll">投票を即時終了</label>
+                  </div>
+                </div>
+              </fieldset>
+              <div class="delay-settings">
+                <div class="checkbox-group">
+                  <input type="checkbox" id="enableDelay" name="enableDelay">
+                  <label for="enableDelay">遅延を有効にする</label>
+                </div>
+                <label for="delay" class="tooltip" data-tip="送信遅延（ミリ秒）。例：1000 は 1 秒">送信遅延（ミリ秒）</label>
+                <input type="number" id="delay" name="delay" step="1" value="0" placeholder="例：1000">
+              </div>
+              <div class="execution-buttons">
+                <button type="submit" class="btn" id="executeBtn">実行</button>
+                <button type="button" class="btn" id="stopButton" disabled>停止</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- スレッド作成 -->
+        <div class="accordion" id="threadCreation">
+          <div class="accordion-header">
+            <h2>スレッド作成</h2>
+            <span class="toggle-icon">＋</span>
+          </div>
+          <div class="accordion-content">
+            <label for="threadTitle" class="tooltip" data-tip="作成するスレッドのタイトル">スレッドタイトル</label>
+            <input type="text" id="threadTitle" name="threadTitle" placeholder="スレッドタイトルを入力">
+            <label for="threadMessage" class="tooltip" data-tip="スレッド内に送信するメッセージ">スレッドのメッセージ</label>
+            <textarea id="threadMessage" name="threadMessage" rows="2" placeholder="スレッド内のメッセージ"></textarea>
+            <div class="checkbox-group">
+              <input type="checkbox" id="threadMentionRandomUsers" name="threadMentionRandomUsers">
+              <label for="threadMentionRandomUsers">ランダムにメンション</label>
+            </div>
+            <label for="threadMentionCount" class="tooltip" data-tip="1～50の範囲で設定">メンション数</label>
+            <input type="number" id="threadMentionCount" name="threadMentionCount" min="1" max="50" value="1">
+            <label for="threadCount" class="tooltip" data-tip="作成回数を指定">作成回数</label>
+            <input type="number" id="threadCount" name="threadCount" value="1">
+            <div class="delay-settings">
+              <div class="checkbox-group">
+                <input type="checkbox" id="threadEnableDelay" name="threadEnableDelay">
+                <label for="threadEnableDelay">遅延を有効にする</label>
+              </div>
+              <label for="threadDelay" class="tooltip" data-tip="各スレッド作成の遅延（ミリ秒）。例：1000 は 1 秒">遅延（ミリ秒）</label>
+              <input type="number" id="threadDelay" name="threadDelay" value="0" placeholder="例：1000">
+            </div>
+            <p style="font-size:0.8rem; color:#00c6ff;">※スレッドのtypeは自動判別されます</p>
+            <div class="thread-execution-buttons">
+              <button type="button" class="btn" id="startThreadBtn">スレッド送信開始</button>
+              <button type="button" class="btn" id="stopThreadBtn" disabled>スレッド停止</button>
+            </div>
+          </div>
+        </div>
+      </form>
       
-      <div style="margin-bottom: 20px;">
-        <button type="submit" class="btn" id="executeBtn">実行</button>
-        <button type="button" class="btn" id="stopButton" disabled>停止</button>
-      </div>
-    </form>
-    <div class="status-box" id="status">処理待機中...</div>
-  </div>
-  
-  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-  <script src="script.js"></script>
-</body>
+      <!-- ログ表示 -->
+      <div style="font-size: 0.9rem; color: #00c6ff; margin-top:10px;">ログ</div>
+      <div class="status-box" id="status">処理待機中...</div>
+    </div>
+    
+    <!-- axios CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <!-- 分割したJSファイル -->
+    <script src="script.js"></script>
+  </body>
 </html>
